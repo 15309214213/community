@@ -53,7 +53,7 @@ public class MapperTests {
     @Test
     public void testDeleteUser(){
         User user=new User();
-        user.setId(150);
+        user.setId(167);
         userMapper.deleteUser(user);
         //System.out.println(i);
     }
