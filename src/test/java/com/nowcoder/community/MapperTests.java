@@ -1,7 +1,9 @@
 package com.nowcoder.community;
 
 
+import com.nowcoder.community.controller.LoginTicket;
 import com.nowcoder.community.dao.DiscussPostMapper;
+import com.nowcoder.community.dao.LoginTicketMapper;
 import com.nowcoder.community.dao.UserMapper;
 import com.nowcoder.community.entity.DiscussPost;
 import com.nowcoder.community.entity.User;
@@ -53,7 +55,7 @@ public class MapperTests {
     @Test
     public void testDeleteUser(){
         User user=new User();
-        user.setId(167);
+        user.setId(168);
         userMapper.deleteUser(user);
         //System.out.println(i);
     }
@@ -67,5 +69,28 @@ public class MapperTests {
 
         int rows = discussPostMapper.selectDiscussPostRows(149);
         System.out.println(rows);
+    }
+
+    @Autowired
+    private LoginTicketMapper loginTicketMapper;
+    @Test
+    public void testInsertTicker(){
+        LoginTicket loginTicket = new LoginTicket();
+        loginTicket.setUesrId(100);
+        loginTicket.setTicket("qweasd");
+        loginTicket.setStatus(0);
+        loginTicket.setExpired(new Date(System.currentTimeMillis()+1000*60*10));
+
+        loginTicketMapper.insertLoginTicket(loginTicket);
+    }
+
+    @Test
+    public void testAndSelectLoginTicket(){
+        LoginTicket loginTicket = loginTicketMapper.selectByTicket("qweasd");
+        System.out.println(loginTicket);
+
+        loginTicketMapper.updateStatus("qweasd",1);
+        loginTicket = loginTicketMapper.selectByTicket("qweasd");
+        System.out.println(loginTicket);
     }
 }

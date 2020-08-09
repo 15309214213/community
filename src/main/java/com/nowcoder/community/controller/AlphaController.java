@@ -1,14 +1,17 @@
 package com.nowcoder.community.controller;
 
 import com.nowcoder.community.service.ArfService;
+import com.nowcoder.community.util.CommunityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.swing.*;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -43,8 +46,8 @@ public class AlphaController {
         }
         System.out.println(request.getParameter("code"));
         //response 给浏览器返回响应数据
-        response.setContentType("text/heml;charset=utf-8");
-        //respon 封装了输出流，向浏览器输出即可
+        response.setContentType("text/html;charset=utf-8");
+        //response 封装了输出流，向浏览器输出即可
         try {
             PrintWriter writer= response.getWriter();
             writer.write("nowcoder");
@@ -146,6 +149,59 @@ public class AlphaController {
         list.add(emp);
         return list;
     }
+
+    //cookies
+    //cookies存在response的头部，和返回的具体数据没有关系
+    @RequestMapping(path = "/cookies/set",method = RequestMethod.GET)
+    @ResponseBody
+    public String setCookies(HttpServletResponse response){
+        //创建cookies（参数是一顿key-value）
+        Cookie cookie = new Cookie("code", CommunityUtil.generateUUID());
+        //设置cookies的生效范围/路径；
+        cookie.setPath("/community/alpha");
+        //设置其存在时间（当其存在于硬盘时）
+        //单位/s
+        cookie.setMaxAge(60*10);
+        //发送
+        response.addCookie(cookie);
+        return "set cookies";
+    }
+
+
+    //浏览器发送的
+    @RequestMapping(path = "/cookies/get",method = RequestMethod.GET)
+    @ResponseBody
+    //服务器需要获取cookies（是多个key-value值）中的某一个数据，可以增加以下注解找到准确的数据
+    public String getCookies(@CookieValue("code") String code){
+        System.out.println(code);
+        return "get cookies";
+
+    }
+
+    //session
+    @RequestMapping(path = "/session/set",method = RequestMethod.GET)
+    @ResponseBody
+    //session 可以存各种数据
+    public String setSession(HttpSession httpSession){
+        httpSession.setAttribute("id","1029516758");
+        httpSession.setAttribute("name","ygj");
+        return "set session";
+
+    }
+    @RequestMapping(path = "/session/get",method = RequestMethod.GET)
+    @ResponseBody
+
+    public String getCookies(HttpSession httpSession){
+        System.out.println(httpSession.getAttribute("name"));
+        System.out.println(httpSession.getAttribute("id"));
+        return "get session";
+
+    }
+
+
+
+
+
 
 
 

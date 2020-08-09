@@ -1,5 +1,7 @@
 package com.nowcoder.community.service;
 
+import com.nowcoder.community.controller.LoginTicket;
+import com.nowcoder.community.dao.LoginTicketMapper;
 import com.nowcoder.community.dao.UserMapper;
 import com.nowcoder.community.entity.User;
 import com.nowcoder.community.util.CommunityConstant;
@@ -11,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
+import sun.nio.cs.US_ASCII;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -41,6 +44,9 @@ public class UserService implements CommunityConstant {
     //
     private String contextPath;
 
+
+    @Autowired
+    private LoginTicketMapper loginTicketMapper;
 
 
 
@@ -117,6 +123,66 @@ public class UserService implements CommunityConstant {
             return ACTIVATION_FAILURE;
         }
 
+    }
+
+    //忘记密码
+    public Map<String ,Object> forget(String email){
+        Map<String ,Object> map = new HashMap<>();
+        if (StringUtils.isBlank(email)){
+            map.put("")
+        }
+    }
+
+
+    //登录（返回会有多种情况，因此返回map）
+    public Map<String ,Object> login(String username, String password, long expriedSeconds){
+        Map<String ,Object> map = new HashMap<>();
+
+        //null值处理
+        if (StringUtils.isBlank(username)){
+            map.put("usernameMsg","账号不能空");
+            return map;
+        }
+        if (StringUtils.isBlank(password)){
+            map.put("passwordMsg","密码不能空");
+            return map;
+        }
+
+        //验证账号
+        User user= userMapper.selectByName(username);
+        if(user == null){
+            map.put("usernameMsg","账户不存在");
+            return map;
+        }
+        //验证状态
+        if (user.getStatus() == 0){
+            map.put("usernameMsg","账户未激活");
+            return map;
+        }
+
+        //验证密码
+        password = CommunityUtil.md5(password + user.getSalt());
+        if (!user.getPassword().equals(password)){
+            map.put("usernameMsg","密码不正确");
+            return map;
+        }
+
+        //生成登录凭证
+        LoginTicket loginTicket= new LoginTicket();
+        loginTicket.setUesrId(user.getId());
+        loginTicket.setTicket(CommunityUtil.generateUUID());
+        loginTicket.setStatus(0);
+        loginTicket.setExpired(new Date(System.currentTimeMillis()+expriedSeconds*1000));
+        loginTicketMapper.insertLoginTicket(loginTicket);
+
+        map.put("ticket", loginTicket.getTicket());
+
+        return map;
+    }
+
+
+    public void logout(String ticket){
+        loginTicketMapper.updateStatus(ticket,1);
     }
 
 
