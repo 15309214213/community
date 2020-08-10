@@ -10,11 +10,13 @@ import com.nowcoder.community.util.MailClient;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import sun.nio.cs.US_ASCII;
 
+import javax.jws.soap.SOAPBinding;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -126,11 +128,31 @@ public class UserService implements CommunityConstant {
     }
 
     //忘记密码
-    public Map<String ,Object> forget(String email){
+    public Map<String ,Object> forget(User user){
         Map<String ,Object> map = new HashMap<>();
-        if (StringUtils.isBlank(email)){
-            map.put("")
+        //handle null
+        if (user == null){
+            throw new IllegalArgumentException("参数不能为空");
         }
+        if (StringUtils.isBlank(user.getEmail())){
+            map.put("emailMsg","邮箱不能为空");
+        }
+
+
+        //验证邮箱
+        User u = userMapper.selectByEmail(user.getEmail());
+        if(u==null){
+            map.put("emailMsg","邮箱不存在");
+            return map;
+        }
+        String sCode = CommunityUtil.generateUUID().substring(0,5);
+
+        //邮件
+        Context context = new Context();
+        context.setVariable("email",user.getEmail());
+        String content  = templateEngine.process("/mail/forget",context);
+        mailClient.sendMail(user.getEmail(),"忘记密码",content);
+        return map;
     }
 
 
@@ -169,7 +191,7 @@ public class UserService implements CommunityConstant {
 
         //生成登录凭证
         LoginTicket loginTicket= new LoginTicket();
-        loginTicket.setUesrId(user.getId());
+        loginTicket.setUserId(user.getId());
         loginTicket.setTicket(CommunityUtil.generateUUID());
         loginTicket.setStatus(0);
         loginTicket.setExpired(new Date(System.currentTimeMillis()+expriedSeconds*1000));
@@ -185,5 +207,10 @@ public class UserService implements CommunityConstant {
         loginTicketMapper.updateStatus(ticket,1);
     }
 
+
+    //查询凭证
+    public LoginTicket  findLoginTicket(String ticket){
+        return loginTicketMapper.selectByTicket(ticket);
+    }
 
 }

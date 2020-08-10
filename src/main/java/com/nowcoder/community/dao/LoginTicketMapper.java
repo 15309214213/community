@@ -12,7 +12,7 @@ public interface LoginTicketMapper {
     //insert
     @Insert({
             "insert into login_ticket(user_id , ticket , status , expired )" ,
-            "value(#{uesrId}, #{ticket}, #{status}, #{expired} )"
+            "value(#{userId}, #{ticket}, #{status}, #{expired} )"
     })
     @Options(useGeneratedKeys = true , keyProperty = "id")
     int insertLoginTicket(LoginTicket loginTicket);

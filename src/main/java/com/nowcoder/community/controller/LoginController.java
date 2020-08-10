@@ -44,11 +44,8 @@ public class LoginController implements CommunityConstant {
     //private static final Logger logger = (Logger) LoggerFactory.getLogger(LoginController.class);
 
 
-    //访问注册页面
-    @RequestMapping(path= "/register",method = RequestMethod.GET)
-    public String getRegisterPage(){
-        return "/site/register";
-    }
+
+
     //访问登录页面
     //denglu页面相当于一个查询是否激活的页面，因此使用get
     @RequestMapping(path= "/login",method = RequestMethod.GET)
@@ -56,12 +53,13 @@ public class LoginController implements CommunityConstant {
         return "/site/login";
     }
 
-    //访问忘记密码页面
-    @RequestMapping(path = "/forget", method = RequestMethod.GET)
-    public String getForgetPage(){
-        return "/site/forget";
-    }
 
+
+    //访问注册页面
+    @RequestMapping(path= "/register",method = RequestMethod.GET)
+    public String getRegisterPage(){
+        return "/site/register";
+    }
 
     @RequestMapping(path = "/register",method = RequestMethod.POST)
     public String register(Model model, User user) {
@@ -101,7 +99,7 @@ public class LoginController implements CommunityConstant {
     }
 
     @RequestMapping(path = "/kaptcha",method = RequestMethod.GET)
-    //由于是敏感数据，且不能存在浏览器短
+    //由于是敏感数据，且不能存在浏览器端
     public void getKaptcha(HttpServletResponse httpServletResponse , HttpSession httpSession){
         //生成验证码
         //由于是敏感数据，且不能存在浏览器cun
