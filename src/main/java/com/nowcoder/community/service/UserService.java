@@ -6,6 +6,7 @@ import com.nowcoder.community.dao.UserMapper;
 import com.nowcoder.community.entity.User;
 import com.nowcoder.community.util.CommunityConstant;
 import com.nowcoder.community.util.CommunityUtil;
+import com.nowcoder.community.util.HostHolder;
 import com.nowcoder.community.util.MailClient;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -217,4 +218,30 @@ public class UserService implements CommunityConstant {
     public int updateHeader(int userId,String headerUrl){
         return userMapper.updateHeader(userId,headerUrl);
     }
+
+
+    //修改密码
+    public Map<String ,Object> changePassword(User user, String prePassword , String newPassword){
+
+
+        Map<String ,Object> map = new HashMap<>();
+        //原验证密码
+        if (StringUtils.isBlank(newPassword)){
+            map.put("prePasswordMsg","原密码不能空");
+            return map;
+        }
+        prePassword = CommunityUtil.md5(prePassword + user.getSalt());
+        if (!user.getPassword().equals(prePassword)){
+            map.put("prePasswordMsg","原密码不正确");
+            return map;
+        }
+        if (StringUtils.isBlank(newPassword)){
+            map.put("newPasswordMsg","新密码不能空");
+            return map;
+        }
+        newPassword = CommunityUtil.md5(newPassword + user.getSalt());
+        userMapper.updatePassword(user.getId(), newPassword);
+        return map;
+    }
+
 }

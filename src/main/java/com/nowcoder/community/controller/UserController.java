@@ -1,5 +1,6 @@
 package com.nowcoder.community.controller;
 
+import com.nowcoder.community.annotation.LoginRequired;
 import com.nowcoder.community.entity.User;
 import com.nowcoder.community.service.UserService;
 import com.nowcoder.community.util.CommunityUtil;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,6 +25,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
 import java.util.logging.FileHandler;
 
 @Controller
@@ -47,13 +50,13 @@ public class UserController {
     private String domain;
 
 
-
+    @LoginRequired
     @RequestMapping(path = "/setting",method = RequestMethod.GET)
     public String getSettingPage(){
         return "/site/setting";
     }
 
-
+    @LoginRequired
     @RequestMapping(path = "/upload",method = RequestMethod.POST)
     //第一个参数用来上传文件，第二个用来给页面返回数据
     public String uploadHeader(MultipartFile headerImage, Model model){
@@ -98,7 +101,7 @@ public class UserController {
         //服务端存放的路径
         fileName = uploadPath+"/"+fileName;
         //文件后缀
-        String suffix = fileName.substring(fileName.lastIndexOf("."));
+        String suffix = fileName.substring(fileName.lastIndexOf(".") +1 );
         response.setContentType("image/"+suffix);
         try(
                 FileInputStream fileInputStream = new FileInputStream(fileName);
@@ -112,6 +115,31 @@ public class UserController {
         }catch (IOException e){
             logger.error("读取头像失败"+ e.getMessage());
         }
+    }
+
+    //修改密码
+    @RequestMapping(path = "/changePassword",method = RequestMethod.POST)
+    public String changePassword(String prePassword,String newPassword,Model model,@CookieValue("ticket") String ticket){
+
+        if (prePassword==null||newPassword==null){
+            model.addAttribute("error","请输入密码");
+            return "/site/setting";
+        }
+
+        User user = hostHolder.getUser();
+        Map<String,Object> map = userService.changePassword(user,prePassword,newPassword);
+        if (map == null || map.isEmpty()){
+            model.addAttribute("msg","修改成功");
+            model.addAttribute("target","/index");
+            userService.logout(ticket);
+            return "/site/operate-result";
+        }
+        else {
+            model.addAttribute("prePasswordMsg", map.get("prePasswordMsg"));
+            model.addAttribute("newPasswordMsg", map.get("newPasswordMsg"));
+            return "/site/setting";
+        }
+
     }
 }
 
