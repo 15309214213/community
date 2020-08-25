@@ -46,6 +46,8 @@
     <update id="updatePassword">
         update user set password = #{password} where id = #{id}
     </update>
+
+
     <delete id="deleteUser" parameterType="User">
         delete from user where id=#{id}
     </delete>
