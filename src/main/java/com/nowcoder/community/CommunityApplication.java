@@ -3,6 +3,8 @@ package com.nowcoder.community;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+
+
 @SpringBootApplication
 //注解所标识的类，
 public class CommunityApplication {
