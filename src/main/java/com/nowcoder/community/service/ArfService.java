@@ -6,9 +6,7 @@ import com.nowcoder.community.dao.arfDao;
 import com.nowcoder.community.entity.DiscussPost;
 import com.nowcoder.community.entity.User;
 import com.nowcoder.community.util.CommunityUtil;
-import org.apache.ibatis.transaction.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
@@ -20,8 +18,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import java.io.InputStream;
-import java.security.PublicKey;
 import java.util.Date;
 
 @Service
@@ -118,7 +114,9 @@ public class ArfService {
                 discussPost.setCreateTime(new Date());
                 discussPostMapper.insertDiscussPost(discussPost);
 
-                Integer.valueOf("qqq");
+
+                //手动写入一个错误，看其是否回滚
+                //Integer.valueOf("qqq");
                 return "okok";
 
             }
