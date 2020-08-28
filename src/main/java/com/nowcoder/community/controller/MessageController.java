@@ -147,7 +147,21 @@ public class MessageController {
         messageService.addMessage(message);
 
         return CommunityUtil.getJSONString(0);
+    }
 
+    //删除信息：更新status= 2
+    @RequestMapping(path = "/letter/delete", method = RequestMethod.POST)
+    @ResponseBody
+    public String deleteLetter(int id){
+        if (messageService.findMessageById(id) == null)
+            return CommunityUtil.getJSONString(1,"消息已被删除");
+        messageService.deleteLetter(id);
+
+
+        return CommunityUtil.getJSONString(0);
 
     }
+
+
+
 }

@@ -80,6 +80,17 @@
         </foreach>
     </update>
 
+    <select id="findMessageById" resultType="Message">
+        select <include refid="selectFields"></include>
+        from message
+        where id = #{id}
+    </select>
+
+    <update id="deleteLetter">
+        update message set status = 2
+        where id = #{id}
+    </update>
+
 
 
 </mapper>

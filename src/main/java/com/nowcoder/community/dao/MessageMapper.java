@@ -30,4 +30,10 @@ public interface MessageMapper {
     //修改消息状态
     int updateStatus(List<Integer> ids, int status);
 
+    //查找某条私信
+    Message findMessageById(int id);
+
+    //删除私信详情
+    int deleteLetter(int id);
+
 }

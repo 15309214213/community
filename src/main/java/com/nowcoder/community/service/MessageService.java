@@ -50,6 +50,18 @@ public class MessageService {
         return messageMapper.updateStatus(ids, 1);
     }
 
+    //删除letter
+    public int deleteLetter(int id){
+        return messageMapper.deleteLetter(id);
+    }
+
+    //根据id找letter
+    public Message findMessageById(int id){
+        return messageMapper.findMessageById(id);
+    }
+
+
+
 
 
 
