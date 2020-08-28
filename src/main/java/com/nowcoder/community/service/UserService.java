@@ -6,18 +6,14 @@ import com.nowcoder.community.dao.UserMapper;
 import com.nowcoder.community.entity.User;
 import com.nowcoder.community.util.CommunityConstant;
 import com.nowcoder.community.util.CommunityUtil;
-import com.nowcoder.community.util.HostHolder;
 import com.nowcoder.community.util.MailClient;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-import sun.nio.cs.US_ASCII;
 
-import javax.jws.soap.SOAPBinding;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -242,6 +238,11 @@ public class UserService implements CommunityConstant {
         newPassword = CommunityUtil.md5(newPassword + user.getSalt());
         userMapper.updatePassword(user.getId(), newPassword);
         return map;
+    }
+
+    //根据名称查user
+    public User findUserByName(String username){
+        return userMapper.selectByName(username);
     }
 
 }
