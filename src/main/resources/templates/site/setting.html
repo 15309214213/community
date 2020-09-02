@@ -90,25 +90,25 @@
 				</form>
 				<!-- 修改密码 -->
 				<h6 class="text-left text-info border-bottom pb-2 mt-5">修改密码</h6>
-				<form class="mt-5">				
+				<form class="mt-5">
 					<div class="form-group row mt-4">
-						<label for="old-password" class="col-sm-2 col-form-label text-right">原密码:</label>
+						<label for="prePasswordMsg" class="col-sm-2 col-form-label text-right">原密码:</label>
 						<div class="col-sm-10">
-							<input type="password" class="form-control" id="old-password" placeholder="请输入原始密码!" required>
-							<div class="invalid-feedback" th:text="${prePasswordMsg}>
+							<input type="password" class="form-control" id="prePasswordMsg" placeholder="请输入原始密码!" required>
+							<div class="invalid-feedback" >
 								密码长度不能小于8位!
-							</div>							
+							</div>
 						</div>
 					</div>
 					<div class="form-group row mt-4">
-						<label for="new-password" class="col-sm-2 col-form-label text-right">新密码:</label>
+						<label for="newPasswordMsg" class="col-sm-2 col-form-label text-right">新密码:</label>
 						<div class="col-sm-10">
 							<input type="password"
 								   th:class="|form-control ${passwordMsg!=null?'is-invalid':''}|"
-								   id="new-password" placeholder="请输入新的密码!" required>
+								   id="newPasswordMsg" placeholder="请输入新的密码!" required>
 							<div class="invalid-feedback" th:text="${newPasswordMsg}">
 								密码长度不能小于8位!
-							</div>							
+							</div>
 						</div>
 					</div>
 					<div class="form-group row mt-4">
@@ -117,7 +117,7 @@
 							<input type="password" class="form-control" id="confirm-password" placeholder="再次输入新密码!" required>
 							<div class="invalid-feedback">
 								两次输入的密码不一致!
-							</div>								
+							</div>
 						</div>
 					</div>
 					<div class="form-group row mt-4">
@@ -126,7 +126,7 @@
 							<button type="submit" class="btn btn-info text-white form-control">立即保存</button>
 						</div>
 					</div>
-				</form>				
+				</form>
 			</div>
 		</div>
 

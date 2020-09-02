@@ -4,6 +4,7 @@ import com.nowcoder.community.controller.LoginTicket;
 import org.apache.ibatis.annotations.*;
 
 @Mapper
+@Deprecated
 public interface LoginTicketMapper {
     //这些方法不仅可以在xml文件中配置，也可以采用如下方法
 
