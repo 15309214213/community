@@ -1,10 +1,11 @@
 package com.nowcoder.community.controller;
 
 import com.nowcoder.community.annotation.LoginRequired;
+import com.nowcoder.community.entity.Comment;
+import com.nowcoder.community.entity.DiscussPost;
+import com.nowcoder.community.entity.Page;
 import com.nowcoder.community.entity.User;
-import com.nowcoder.community.service.FollowerService;
-import com.nowcoder.community.service.LikeService;
-import com.nowcoder.community.service.UserService;
+import com.nowcoder.community.service.*;
 import com.nowcoder.community.util.CommunityConstant;
 import com.nowcoder.community.util.CommunityUtil;
 import com.nowcoder.community.util.HostHolder;
@@ -26,6 +27,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -181,6 +185,88 @@ public class UserController implements CommunityConstant {
         return "/site/profile";
 
     }
+
+    @Autowired
+    private DiscussPostService discussPostService;
+    //查看某人发布的帖子
+    @RequestMapping(path = "/my-post/{userId}",method = RequestMethod.GET)
+    public String getProfilePost(@PathVariable("userId") int userId, Model model, Page page){
+        User user = userService.findUserById(userId);
+        if (user == null){
+            return null;
+        }
+        model.addAttribute("user",user);
+
+        page.setLimit(100);
+        page.setPath("/my-post/" + userId);
+        page.setRows(discussPostService.findDiscussPostRows(userId));
+
+        List<DiscussPost> discussPostList = discussPostService.findDiscussPost(userId, page.getOffset(), page.getLimit());
+        List<Map<String,Object> > discussPosts = new ArrayList<>();
+        if (discussPostList!=null){
+            for (DiscussPost post : discussPostList){
+                Map<String ,Object> map = new HashMap<>();
+                map.put("post", post);
+
+                long likeCount = likeService.findEntityLikeCount(ENTITY_TYPE_POST,post.getId());
+                map.put("likeCount",likeCount);
+
+                discussPosts.add(map);
+
+            }
+        }
+
+        model.addAttribute("discussPostCount",discussPostService.findDiscussPostRows(userId));
+        model.addAttribute("discussPosts",discussPosts);
+        //model.addAttribute("user",user);
+        return "/site/my-post";
+
+    }
+
+
+    //查询某人的评论&回复
+    @Autowired
+    private CommentService commentService;
+    @RequestMapping(path = "/my-reply/{userId}",method = RequestMethod.GET)
+    public String getProfileComment(@PathVariable("userId") int userId, Model model, Page page){
+        User user = userService.findUserById(userId);
+        if (user == null){
+            return null;
+        }
+        model.addAttribute("user",user);
+
+        //page.setLimit(5);
+        page.setPath("/my-reply/" + userId);
+        page.setRows(commentService.findCommentCountByUserId(userId));
+
+        List<Comment> commentList = commentService.findCommentsByUserId(userId, page.getOffset(), page.getLimit());
+        List<Map<String,Object> > comments = new ArrayList<>();
+        if (commentList!=null){
+            for (Comment comment : commentList){
+                if (comment==null){
+                    break;
+                }
+                Map<String ,Object> map = new HashMap<>();
+                map.put("comment", comment);
+
+                int postId=comment.getEntityId();
+                map.put("postId",postId);
+
+                String postTitle = discussPostService.findDiscussPostById(postId).getTitle();
+                map.put("postTitle",postTitle);
+
+                comments.add(map);
+
+            }
+        }
+
+        model.addAttribute("commentCount",commentService.findCommentCountByUserId(userId));
+        model.addAttribute("comments",comments);
+        //model.addAttribute("user",user);
+        return "/site/my-reply";
+
+    }
+
 
 }
 
