@@ -37,7 +37,7 @@ public class Page {
     }
 
     public void setLimit(int limit) {
-        if (limit>=1&&limit<=100){
+        if (limit >= 1 && limit <= 100){
 
             this.limit = limit;
         }
@@ -49,7 +49,6 @@ public class Page {
 
     public void setRows(int rows) {
         if (rows >= 0) {
-
             this.rows = rows;
         }
     }
@@ -67,17 +66,17 @@ public class Page {
      */
     public int getOffset(){
         //( current - 1 ) * limit
-        return (current-1)*limit;
+        return (current-1) * limit;
     }
     /**
      * 总行数
      */
     public int getTotal(){
         if (rows % limit == 0) {
-            return  rows*limit;
+            return  rows / limit;
         }
         else{
-            return rows*limit+1;
+            return rows / limit+1;
         }
     }
 
