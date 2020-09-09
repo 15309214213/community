@@ -19,8 +19,8 @@ public class DiscussPostService {
     private SensitiveFilter sensitiveFilter;
 
     //返回名单是需要返回用户得昵称而不是id，因此需要一个类实现讲id转为昵称(userService)
-    public List<DiscussPost> findDiscussPost(int userId,int offset,int limit){
-        return discussPostMapper.selectDiscussPosts(userId,offset,limit);
+    public List<DiscussPost> findDiscussPost(int userId,int offset,int limit ,int orderMode){
+        return discussPostMapper.selectDiscussPosts(userId,offset,limit,orderMode);
     }
     public int findDiscussPostRows(int userId){
         return discussPostMapper.selectDiscussPostRows(userId);
@@ -57,6 +57,10 @@ public class DiscussPostService {
     public int updateStatus(int id, int status){
         return discussPostMapper.updateStatus(id, status);
     }
+    public int updateScore(int id, double score){
+        return discussPostMapper.updateScore(id, score);
+    }
+
 
 
 }

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,7 +30,8 @@ public class HomeController implements CommunityConstant {
     @Autowired
     private UserService userService;
     @RequestMapping(path = "/index",method = RequestMethod.GET)
-    public String getIndexPage(Model model, Page page){
+    public String getIndexPage(Model model, Page page
+            ,@RequestParam(name = "orderMode" ,defaultValue = "0") int orderMode){
 
         //也可以返回modelandview
 
@@ -37,9 +39,10 @@ public class HomeController implements CommunityConstant {
         //方法调用之前spring mvc会自动实例化model和page，并且将page注入model
         //
         page.setRows(discussPostService.findDiscussPostRows(0));
-        page.setPath("/index");
+        page.setPath("/index?orderMode=" + orderMode);
 
-        List<DiscussPost> list= discussPostService.findDiscussPost(0,page.getOffset(),page.getLimit());
+        List<DiscussPost> list= discussPostService
+                .findDiscussPost(0,page.getOffset(),page.getLimit(),orderMode);
         List<Map<String,Object> > discussPosts = new ArrayList<>();
         if(list!=null){
             for(DiscussPost post: list){
@@ -61,6 +64,7 @@ public class HomeController implements CommunityConstant {
         }
         //将页面装到model
         model.addAttribute("discussPosts",discussPosts);
+        model.addAttribute("orderMode", orderMode);
         return "/index";
     }
 

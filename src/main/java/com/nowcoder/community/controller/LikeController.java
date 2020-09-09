@@ -8,7 +8,9 @@ import com.nowcoder.community.service.LikeService;
 import com.nowcoder.community.util.CommunityConstant;
 import com.nowcoder.community.util.CommunityUtil;
 import com.nowcoder.community.util.HostHolder;
+import com.nowcoder.community.util.RedisKeyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -28,6 +30,9 @@ public class LikeController implements CommunityConstant {
 
     @Autowired
     private EventProducer eventProducer;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     //异步请求
     @LoginRequired
@@ -58,6 +63,13 @@ public class LikeController implements CommunityConstant {
                     .setEntityUserId(entityUserId)
                     .setData("postId" ,postId);
             eventProducer.fireEvent(event);
+        }
+
+        if (entityType == ENTITY_TYPE_POST){
+            //计算帖子分数
+            String redisKey = RedisKeyUtil.getPostScore();
+            //可以去重
+            redisTemplate.opsForSet().add(redisKey, postId);
         }
 
         return CommunityUtil.getJSONString(0,null,map);
