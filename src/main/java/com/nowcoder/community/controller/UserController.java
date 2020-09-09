@@ -41,19 +41,66 @@ public class UserController implements CommunityConstant {
     @Autowired
     private UserService userService;
 
+
+
     @Autowired
     private HostHolder hostHolder;
-
     @Value("${community.path.upload}")
     private String uploadPath;
-
+    @Value("${community.path.domain}")
+    private String domain;
+    //--------------------
     @Value("${server.servlet.context-path}")
     private String contextPath;
 
-    @Value("${community.path.domain}")
-    private String domain;
 
+    //--------------------
+//    @Value("${qiniu.key.access}")
+//    private String accessKey;
+//
+//    @Value("${qiniu.key.secret}")
+//    private String secretKey;
+//
+//    @Value("${qiniu.bucket.header.name}")
+//    private String headerBucketName;
+//
+//    @Value("${quniu.bucket.header.url}")
+//    private String headerBucketUrl;
 
+    //--------------------
+//    @LoginRequired
+//    @RequestMapping(path = "/setting", method = RequestMethod.GET)
+//    public String getSettingPage(Model model) {
+//        // 上传文件名称
+//        String fileName = CommunityUtil.generateUUID();
+//        // 设置响应信息
+//        StringMap policy = new StringMap();
+//        policy.put("returnBody", CommunityUtil.getJSONString(0));
+//        // 生成上传凭证
+//        Auth auth = Auth.create(accessKey, secretKey);
+//        String uploadToken = auth.uploadToken(headerBucketName, fileName, 3600, policy);
+//
+//        model.addAttribute("uploadToken", uploadToken);
+//        model.addAttribute("fileName", fileName);
+//
+//        return "/site/setting";
+//    }
+//---------------
+//    // 更新头像路径
+//    @RequestMapping(path = "/header/url", method = RequestMethod.POST)
+//    @ResponseBody
+//    public String updateHeaderUrl(String fileName) {
+//        if (StringUtils.isBlank(fileName)) {
+//            return CommunityUtil.getJSONString(1, "文件名不能为空!");
+//        }
+//
+//        String url = headerBucketUrl + "/" + fileName;
+//        userService.updateHeader(hostHolder.getUser().getId(), url);
+//
+//        return CommunityUtil.getJSONString(0);
+//    }
+
+//原版代码
     @LoginRequired
     @RequestMapping(path = "/setting",method = RequestMethod.GET)
     public String getSettingPage(){
@@ -99,6 +146,7 @@ public class UserController implements CommunityConstant {
         return "redirect:/index";
     }
 
+    //原版代码
     //浏览器获取头像
     @RequestMapping(path = "/header/{fileName}",method = RequestMethod.GET)
     public void gerHeader(@PathVariable("fileName") String fileName, HttpServletResponse response){
